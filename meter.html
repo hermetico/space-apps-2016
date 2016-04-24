@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" >
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Boometer | Meter</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/styles.css" rel="stylesheet">
+    <link href="css/bootstrap-slider.min.css" rel="stylesheet">
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+  </head>
+  <body>
+     <div class="site-wrapper home-cover">
+
+      <div class="site-wrapper-inner">
+
+        <div class="cover-container">
+          
+          <div class="masthead clearfix">
+            <div class="inner">
+                            <nav>
+                <ul class="nav masthead-nav floats">
+                  
+                  <li class="left">
+                    <a href="map.html" class="btn btn-link btn-lg" role="button" >
+                      <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>
+                      <br>map</a>
+                    </li>
+                    
+                  <li>
+                    <a href="index.html" class="btn btn-link btn-lg" role="button">
+                      <span class="glyphicon glyphicon-th" aria-hidden="true"></span>
+                      <br>home</a>
+                  </li>
+                  
+                  <li class="right">
+                    <a href="meter.html" class="btn btn-link btn-lg" role="button">
+                      <span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span>
+                      <br>meter</a>
+                    </li>
+                </ul>
+              </nav>
+              
+            </div>
+          </div>
+
+          <div class="inner cover ">
+            <input id="slider-bar" type="number" data-slider-min="0" data-slider-max="120" data-slider-step="1" data-slider-value="0" data-slider-orientation="vertical"/>
+            <br>
+            <br>
+            <input id="slider-value" type="text" >0 db</input>
+          </div>
+
+          <div class="mastfoot">
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/bootstrap-slider.min.js"></script>
+    <script src="js/volume-meter.js"></script>
+
+    <script>
+        $(document).ready(function(){
+      
+            var slider = new Slider("#slider-bar", {
+            	reversed : true
+            });
+
+            navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia;
+            
+            var audioContext = null;
+            var meter = null;
+            var canvasContext = null;
+            var HEIGHT=120;
+            var rafID = null;
+            
+
+            
+
+            // monkeypatch Web Audio
+            window.AudioContext = window.AudioContext || window.webkitAudioContext;
+        	
+            // grab an audio context
+            audioContext = new AudioContext();
+        
+            // Attempt to get audio input
+            try {
+                // monkeypatch getUserMedia
+                navigator.getUserMedia = 
+                	navigator.getUserMedia ||
+                	navigator.webkitGetUserMedia ||
+                	navigator.mozGetUserMedia;
+        
+                // ask for an audio input
+                navigator.getUserMedia(
+                {
+                    "audio": {
+                        "mandatory": {
+                            "googEchoCancellation": "false",
+                            "googAutoGainControl": "false",
+                            "googNoiseSuppression": "false",
+                            "googHighpassFilter": "false"
+                        },
+                        "optional": []
+                    },
+                }, gotStream, didntGetStream);
+            } catch (e) {
+                alert('getUserMedia threw exception :' + e);
+            }
+        
+
+            
+            function didntGetStream() {
+                alert('Stream generation failed.');
+            }
+            
+            var mediaStreamSource = null;
+            
+            function gotStream(stream) {
+                // Create an AudioNode from the stream.
+                mediaStreamSource = audioContext.createMediaStreamSource(stream);
+            
+                // Create a new volume meter and connect it.
+                meter = createAudioMeter(audioContext);
+                mediaStreamSource.connect(meter);
+            
+                window.setInterval(function(){
+                    drawLoop();
+                }, 200);
+                            // kick off the visual updating
+                
+            }
+            
+            function drawLoop( time ) {
+                var db = meter.volume * 4 * HEIGHT;
+                console.log(db)
+                $('#slider-value').val(Math.floor(db) + ' db');
+                slider.setValue(db);
+
+            }
+
+
+        })
+
+
+    </script>
+  </body>
+</html>

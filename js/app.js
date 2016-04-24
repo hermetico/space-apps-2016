@@ -1,7 +1,9 @@
 var map;
 var position;
-var lat_offset = -0.01;
-var lng_offset = -0.02
+var lat_offset = -0.1;
+var lng_offset = -0.3
+var speed = 0.0009;
+var zoom = 10;
 
 
 var high_options = {
@@ -11,7 +13,7 @@ var high_options = {
     map: map,
     lat:0, 
     lng:0,
-    radius:1000
+    radius:32000
 }
 
 var goal_options = {
@@ -33,8 +35,19 @@ var low_options = {
     map: map,
     lat:0, 
     lng:0,
-    radius:500,
+    radius:6000,
 }
+
+
+var checkVibration = function(){
+    // enable vibration support
+    return navigator.vibrate || navigator.webkitVibrate || navigator.mozVibrate || navigator.msVibrate;
+}
+
+var vibrate = function(){
+    navigator.vibrate([500, 300, 100]);
+}
+
 
 var getCurrentPosition = function(currentData){
     
@@ -50,8 +63,29 @@ var getCurrentPosition = function(currentData){
     map = new GMaps({
       div: '#map',
       lat: position.latitude,
-      lng: position.longitude
+      lng: position.longitude, 
+      zoom: zoom, 
+      disableDefaultUI: true, 
+      mapTypeId: google.maps.MapTypeId.ROADMAP
     });
+    
+    if(checkVibration()){
+      map.addControl({
+          position: 'top_right',
+          content: 'Vibration',
+          style: {
+            margin: '5px',
+            padding: '1px 6px',
+            border: 'solid 1px #717B87',
+            background: '#fff', 
+            color:'#fff'
+          },
+          events: {
+            click: vibrate()
+          }
+        });
+    }
+
 
 }
 
@@ -62,8 +96,8 @@ var createCircle = function(options){
 var createInterval = function( circle ){
      window.setInterval(function(){
         var p = circle.getCenter();
-        var g = p.lat()+0.0001;
-        var m = p.lng()+0.0001;    
+        var g = p.lat() + speed;
+        var m = p.lng() + speed;
         circle.setCenter(new google.maps.LatLng(g,m));
     }, 200);
 }
@@ -83,15 +117,15 @@ $(document).ready(function(){
             
         // Adds the circles
         var high = createCircle(high_options);
-        var goal = createCircle(goal_options);
+        //var goal = createCircle(goal_options);
         var low = createCircle(low_options);
         
         // creates the interval to update the circles
         createInterval(high);
-        createInterval(goal);
+        //createInterval(goal);
         createInterval(low);
         
-      }, 1000);
+      }, 2000);
 
 
  })
