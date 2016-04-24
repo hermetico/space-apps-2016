@@ -69,23 +69,6 @@ var getCurrentPosition = function(currentData){
       mapTypeId: google.maps.MapTypeId.ROADMAP
     });
     
-    if(checkVibration()){
-      map.addControl({
-          position: 'top_right',
-          content: 'Vibration',
-          style: {
-            margin: '5px',
-            padding: '1px 6px',
-            border: 'solid 1px #717B87',
-            background: '#fff', 
-            color:'#fff'
-          },
-          events: {
-            click: vibrate()
-          }
-        });
-    }
-
 
 }
 

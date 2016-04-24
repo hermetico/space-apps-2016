@@ -189,7 +189,7 @@ body {
 }
 
 .home-text{
-  margin-top:80%;
+  margin-top:40%;
 }
 
 .floats{
@@ -203,3 +203,4 @@ body {
 
 #slider-bar{color:#000;}
 #slider-value{width:100px; background-color:transparent;border:0px;font-size:30px;}
+.about-sec{background-color: rgba(80,80,80,.5);border-radius:25px;}

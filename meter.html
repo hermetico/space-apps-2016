@@ -31,23 +31,27 @@
             <div class="inner">
                             <nav>
                 <ul class="nav masthead-nav floats">
-                  
-                  <li class="left">
-                    <a href="map.html" class="btn btn-link btn-lg" role="button" >
-                      <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>
-                      <br>map</a>
-                    </li>
-                    
-                  <li>
+                   <li class="left">
                     <a href="index.html" class="btn btn-link btn-lg" role="button">
                       <span class="glyphicon glyphicon-th" aria-hidden="true"></span>
                       <br>home</a>
                   </li>
                   
                   <li class="right">
+                    <a href="map.html" class="btn btn-link btn-lg" role="button" >
+                      <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>
+                      <br>map</a>
+                    </li>
+
+                  <li class="right">
                     <a href="meter.html" class="btn btn-link btn-lg" role="button">
                       <span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span>
                       <br>meter</a>
+                    </li>
+                    <li class="right">
+                    <a href="about.html" class="btn btn-link btn-lg" role="button">
+                      <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
+                      <br>about</a>
                     </li>
                 </ul>
               </nav>
@@ -59,7 +63,7 @@
             <input id="slider-bar" type="number" data-slider-min="0" data-slider-max="120" data-slider-step="1" data-slider-value="0" data-slider-orientation="vertical"/>
             <br>
             <br>
-            <input id="slider-value" type="text" >0 db</input>
+            <input id="slider-value" type="text"></input>
           </div>
 
           <div class="mastfoot">
@@ -124,13 +128,25 @@
                     },
                 }, gotStream, didntGetStream);
             } catch (e) {
+              if(Android)
+              {
+                //TODO
+              }else{
                 alert('getUserMedia threw exception :' + e);
+              }
             }
         
 
             
             function didntGetStream() {
-                alert('Stream generation failed.');
+              
+              if(Android)
+              {
+                Android.showToast('Sorry, functionality not working, if you are in the app, please, try in the web page');
+              }else{
+                alert('Sorry, functionality not working, if you are in the app, please, try in the web page');
+              }
+                
             }
             
             var mediaStreamSource = null;
@@ -152,7 +168,6 @@
             
             function drawLoop( time ) {
                 var db = meter.volume * 4 * HEIGHT;
-                console.log(db)
                 $('#slider-value').val(Math.floor(db) + ' db');
                 slider.setValue(db);
 
